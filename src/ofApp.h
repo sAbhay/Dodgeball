@@ -1,8 +1,11 @@
 #pragma once
 
 #include "ofMain.h"
+#include "player.hpp"
+#include "ball.hpp"
 
-class ofApp : public ofBaseApp{
+class ofApp : public ofBaseApp
+{
 
 	public:
 		void setup();
@@ -20,9 +23,10 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
-        ofVec3f dimensions = ofVec3f(2000, 1000, 2000);
     
     private:
-        ofEasyCam cam;
+        Player player;
+        Ball b[20];
+        ofVec3f dimensions = ofVec3f(10000, 1000, 10000);
+        bool m[4] = {false, false, false, false};
 };

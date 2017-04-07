@@ -8,7 +8,24 @@
 
 #include "ball.hpp"
 
-Ball::Ball(ofVec3f start, ofVec3f t, int s, int radius, ofVec3f* dimensions)
+Ball::Ball()
+{
+    pos = ofVec3f(0, 0, 0);
+    target = pos;
+    vel = pos - target;
+    speed = 0;
+    
+    curvelim = ofVec2f(0, 0);
+    curve = ofVec2f(0, 0);
+    
+    d = ofVec3f(0, 0, 0);
+    
+    restitution = 0;
+    r = 0;
+    m = 0;
+}
+
+Ball::Ball(ofVec3f start, ofVec3f t, int s, int radius, ofVec3f& dimensions)
 {
     pos = ofVec3f(start.x, start.y, start.z);
     target = t;
@@ -21,7 +38,7 @@ Ball::Ball(ofVec3f start, ofVec3f t, int s, int radius, ofVec3f* dimensions)
     curvelim = ofVec2f(ofRandom(-PI, PI), ofRandom(-PI, PI));
     curve = ofVec2f(0, 0);
     
-    d = *dimensions;
+    d = dimensions;
     
     restitution = 0.9;
     r = radius;
@@ -35,7 +52,9 @@ Ball::~Ball()
 
 void Ball::display()
 {
-    ofDrawSphere(pos.x, pos.y, pos.z, r);
+    ofFill();
+    ofSetColor(255, 0, 0);
+    ofDrawIcoSphere(pos.x, pos.y, pos.z, r);
 }
 
 void Ball::move()
@@ -48,10 +67,10 @@ void Ball::move()
     
     pos += vel;
     
-    pos.y -= 1;
+//    pos.y += 1;
 }
 
-void Ball::checkCollision(Ball b)
+void Ball::checkCollision(Ball& b)
 {
     if(ofDist(pos.x, pos.y, pos.z, b.pos.x, b.pos.y, b.pos.z) < r + b.r)
     {
@@ -72,9 +91,11 @@ void Ball::checkCollision(Ball b)
 
 void Ball::checkBoundaries()
 {
-    if(pos.x <= 0 || pos.x >= d.x) vel.x *= -restitution;
-    if(pos.y <= 0 || pos.y >= d.y) vel.y *= -restitution;
-    if(pos.z <= 0 || pos.z >= d.y) vel.z *= -restitution;
+    if(pos.x <= r || pos.x >= d.x - r) vel.x *= -restitution;
+    if(pos.y <= r || pos.y >= d.y - r) vel.y *= -restitution;
+    if(pos.z <= r || pos.z >= d.y - r) vel.z *= -restitution;
+    
+    if(live && pos.y <= r) live = false;
 }
 
 void Ball::update()

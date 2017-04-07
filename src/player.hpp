@@ -10,23 +10,30 @@
 #define player_hpp
 
 #include <stdio.h>
-#include "ofApp.h"
+#include "ofMain.h"
+#include "ball.hpp"
+#include "camera.hpp"
 
 class Player
 {
     private:
         ofVec3f pos;
         ofVec3f size;
-        ofEasyCam cam;
+        Camera cam;
         bool ducked;
         bool out;
         int team;
         float speed;
         void checkBoundaries();
+        float power;
+        ofVec3f d;
+        bool oscillating;
+        bool holdingBall;
 
     
     public:
-        Player(ofVec3f start, int t);
+        Player();
+        Player(ofVec2f start, int t, ofVec3f& dimensions);
         ~Player();
         void moveFoward();
         void moveBack();
@@ -35,11 +42,17 @@ class Player
         void jump();
         void duck();
         void update();
-        void pickUpBall(Ball b);
-        void checkIfHit(Ball b);
+//        void pickUpBall(Ball* b);
+//        void checkIfHit(Ball* b);
+//        void throwBall(Ball* b);
+        void oscillatePower();
+        void camera();
     
         void setDucked(bool d) {ducked = d;}
-        bool ducked() {return ducked;}
+        bool isDucked() {return ducked;}
+        void beginCam() {cam.begin();}
+        void endCam() {cam.end();}
+        bool holdsBall() {return holdingBall;}
 };
 
 #endif /* player_hpp */
