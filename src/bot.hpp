@@ -9,5 +9,12 @@
 #define bot_hpp
 
 #include <stdio.h>
+#include "player.hpp"
+#include "ofMain.h"
+
+class Bot
+{
+    
+};
 
 #endif /* bot_hpp */

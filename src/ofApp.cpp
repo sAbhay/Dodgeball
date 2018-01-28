@@ -44,7 +44,13 @@ void ofApp::draw()
             player.carryBall(b[i]);
         }
         
-//        for(int j )
+        for(int j = 0; j < 20; j++)
+        {
+            if(i != j)
+            {
+                b[i].checkCollision(b[j]);
+            }
+        }
     }
     
     player.endCam();
@@ -53,27 +59,27 @@ void ofApp::draw()
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     
-    if(key == 'w')
+    if(key == 'w' || key == 'W')
     {
         m[0] = true;
     }
     
-    if(key == 's')
+    if(key == 's' || key == 'S')
     {
         m[1] = true;
     }
     
-    if(key == 'a')
+    if(key == 'a' || key == 'A')
     {
         m[2] = true;
     }
     
-    if(key == 'd')
+    if(key == 'd' || key == 'D')
     {
         m[3] = true;
     }
     
-    if(key == SHIFT)
+    if(key == OF_KEY_LEFT_SHIFT)
     {
         player.setDucked(true);
     }
@@ -87,22 +93,22 @@ void ofApp::keyPressed(int key){
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
 
-    if(key == 'w')
+    if(key == 'w' || key == 'W')
     {
         m[0] = false;
     }
     
-    if(key == 's')
+    if(key == 's' || key == 'S')
     {
         m[1] = false;
     }
     
-    if(key == 'a')
+    if(key == 'a' || key == 'A')
     {
         m[2] = false;
     }
     
-    if(key == 'd')
+    if(key == 'd' || key == 'D')
     {
         m[3] = false;
     }
@@ -111,7 +117,6 @@ void ofApp::keyReleased(int key){
     {
         player.setDucked(false);
     }
-
 }
 
 //--------------------------------------------------------------
@@ -140,7 +145,6 @@ void ofApp::mousePressed(int x, int y, int button){
                 if(ofDist(bp.x, bp.z, p.x, p.z) <= 500)
                 {
                     player.pickUpBall(b[i]);
-//                    std::cout << player.getPos();
                 }
             }
             else

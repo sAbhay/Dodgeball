@@ -28,6 +28,9 @@ Player::Player()
     d = ofVec3f(0, 0, 0);
     
     power = 0;
+    
+    jumping = false;
+    count = 0;
 }
 
 Player::Player(ofVec2f start, int t, ofVec3f& dimensions)
@@ -58,7 +61,8 @@ Player::Player(ofVec2f start, int t, ofVec3f& dimensions)
     
     power = 0;
     
-//    std::cout << d;
+    jumping = false;
+    count = 0;
 }
 
 Player::~Player()
@@ -88,7 +92,8 @@ void Player::moveBack()
 
 void Player::jump()
 {
-    cam.moveUp(2000);
+    jumping = true;
+    count = 0;
 }
 
 void Player::duck()
@@ -149,11 +154,10 @@ void Player::oscillatePower()
 
 void Player::throwBall(Ball& b)
 {
-//    b = Ball(pos, ofVec3f(ofRandom(0, d.x), ofRandom(0, d.y), ofRandom(0, d.z)), power, b.getSize(), &d);
-    //Ball(ofVec3f st, int s, int radius, ofVec3f& dimensions);
     power = 100;
     holdingBall = false;
     b.setHeld(false);
+    b.setCurve(ofVec2f(ofRandom(0, PI), ofRandom(-PI, PI/2)));
     ofVec3f target = cam.getForward();
     b.setVel(target*power);
     b.setLive(true);
@@ -161,7 +165,18 @@ void Player::throwBall(Ball& b)
 
 void Player::update()
 {
-    if(ducked) duck();
+    if(ducked)
+    {
+        duck();
+        ducked = false;
+    }
+    
+    if(revert)
+    {
+        speed *= 2;
+        size.y *= 2;
+        revert = false;
+    }
     
     cam.position.y = 5*pos.y/6;
     pos = cam.position;
@@ -173,7 +188,24 @@ void Player::update()
     
     cam.speed = speed;
     
-    cam.applyGravity(0.1f, 5*pos.y/6);
+    if(jumping)
+    {
+        if(count <= 12)
+        {
+            count++;
+            cam.moveUp(150);
+        }
+        else
+        {
+            jumping = false;
+            cam.applyGravity(0.08f, 5*pos.y/6);
+            count = 0;
+        }
+    }
+    else
+    {
+        cam.applyGravity(0.1f, 5*pos.y/6);
+    }
     
     if(oscillating) oscillatePower();
 }

@@ -23,8 +23,6 @@ CeasyCam::CeasyCam(ofVec3f pos, float near, float far)
     tilt = 0.f;
     friction = 0.75f;
     
-    count = 0;
-    
     mouse.x = prevMouse.x = ofGetMouseX();
     mouse.y = prevMouse.y = ofGetMouseY();
     
@@ -47,8 +45,6 @@ CeasyCam::CeasyCam()
     pan = 0.f;
     tilt = 0.f;
     friction = 0.75f;
-    
-    count = 0;
     
     mouse.x = prevMouse.x = ofGetMouseX();
     mouse.y = prevMouse.y = ofGetMouseY();

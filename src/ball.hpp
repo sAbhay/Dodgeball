@@ -48,9 +48,11 @@ private:
         ofVec3f getPos() {return pos;}
         void setVel(ofVec3f v) {vel = v;}
         ofVec3f getVel() {return vel;}
-        float getSize() {return r;}
+        int getSize() {return r;}
+        int getMass() {return m;}
         bool isHeld() {return held;}
         void setHeld(bool h) {held = h;}
+        void setCurve(ofVec2f c) {curve = c;}
 };
 
 #endif /* ball_hpp */

@@ -32,7 +32,6 @@ Ball::Ball(ofVec3f st, int s, int radius, ofVec3f& dimensions)
     start = st;
     pos = ofVec3f(st.x, st.y, st.z);
     target = pos;
-//    target = ofVec3f(ofRandom(-d.x/2, d.x/2), ofRandom(-d.y/2, d.y/2), ofRandom(-d.z/2, d.z/2));
     vel = pos - target;
     speed = s;
     
@@ -46,7 +45,7 @@ Ball::Ball(ofVec3f st, int s, int radius, ofVec3f& dimensions)
     r = radius;
     m = 2*r;
     
-    curve = ofVec2f(ofRandom(-PI, PI), ofRandom(-PI, PI/2));
+    curve = ofVec2f(ofRandom(0, PI), ofRandom(-PI, PI/2));
     deviation = ofVec2f(0, 0);
     
     live = false;
@@ -98,22 +97,45 @@ void Ball::checkCollision(Ball& b)
 {
     ofVec3f bP = b.getPos();
     ofVec3f bV = b.getVel();
-    float bR = b.getSize();
+    int bR = b.getSize();
+    int bM = b.getMass();
 
     if(ofDist(pos.x, pos.y, pos.z, bP.x, bP.y, bP.z) < r + bR)
     {
-        ofVec3f temp[] = {pos - bP, ofVec3f(-temp[0].x, -temp[0].y, -temp[0].z)};
-        
-        for(int i = 0; i < 2; i++)
-        {
-            temp[i].normalize();
-        }
-        
-        temp[0] *= bV.length() * restitution;
-        temp[1] *= vel.length() * restitution;
-        
-        vel = temp[0];
-        b.setVel(temp[1]);
+//        ofVec3f temp[] = {pos - bP, ofVec3f(-temp[0].x, -temp[0].y, -temp[0].z)};
+//
+//        for(int i = 0; i < 2; i++)
+//        {
+//            temp[i].normalize();
+//        }
+//
+//        temp[0] *= bV.length() * restitution + 10;
+//        temp[1] *= vel.length() * restitution + 10;
+//
+//        vel = temp[0];
+//        b.setVel(temp[1]);
+
+        ofVec3f U1x,U1y,U2x,U2y,V1x,V1y,V2x,V2y;
+
+        float m1, m2, x1, x2;
+        ofVec3f v1temp, v1, v2, v1x, v2x, v1y, v2y, x(pos - bP);
+
+        x.normalize();
+        v1 = vel;
+        x1 = x.dot(v1);
+        v1x = x * x1;
+        v1y = v1 - v1x;
+        m1 = m;
+
+        x = x *- 1;
+        v2 = bV;
+        x2 = x.dot(v2);
+        v2x = x * x2;
+        v2y = v2 - v2x;
+        m2 = bM;
+
+        vel = v1x*(m1-m2)/(m1+m2) + v2x*(2*m2)/(m1+m2) + v1y;
+        b.setVel(v1x*(2*m1)/(m1+m2) + v2x*(m2-m1)/(m1+m2) + v2y);
     }
 }
 

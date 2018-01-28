@@ -24,8 +24,6 @@ class CeasyCam
         ofVec2f mouse;
         ofVec2f prevMouse;
     
-        int count;
-    
         float clamp(float x, float min, float max);
     
     public:

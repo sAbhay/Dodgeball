@@ -23,6 +23,7 @@ class Player
         ofVec3f pos;
         ofVec3f size;
         bool ducked;
+        bool revert;
         bool hit;
         int team;
         float speed;
@@ -31,6 +32,8 @@ class Player
         ofVec3f d;
         bool oscillating;
         bool holdingBall;
+        bool jumping;
+        int count;
     
     public:
         Player();
@@ -50,7 +53,7 @@ class Player
         void oscillatePower();
         void camera();
     
-        void setDucked(bool d) {ducked = d;}
+        void setDucked(bool d) {if(d) ducked = d; else revert = true;}
         bool isDucked() {return ducked;}
         void beginCam() {cam.begin();}
         void endCam() {cam.end();}
