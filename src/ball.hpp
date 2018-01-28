@@ -11,7 +11,6 @@
 
 #include <stdio.h>
 #include "ofMain.h"
-#include "player.hpp"
 
 class Ball
 {
@@ -22,20 +21,23 @@ private:
     
     ofVec3f pos;
     ofVec3f vel;
+    ofVec3f start;
     ofVec3f target;
-    ofVec2f curvelim;
+    ofVec2f deviation;
     ofVec2f curve;
     int r;
     int m;
     float speed;
     float restitution;
+    float friction;
     bool live;
+    bool held;
     
     ofVec3f d;
 
     public:
         Ball();
-        Ball(ofVec3f start, ofVec3f target, int s, int radius, ofVec3f& dimensions);
+        Ball(ofVec3f st, int s, int radius, ofVec3f& dimensions);
         ~Ball();
         void checkCollision(Ball& b);
         void update();
@@ -44,7 +46,11 @@ private:
         bool isLive() {return live;}
         void setPos(ofVec3f p) {pos = p;}
         ofVec3f getPos() {return pos;}
+        void setVel(ofVec3f v) {vel = v;}
+        ofVec3f getVel() {return vel;}
         float getSize() {return r;}
+        bool isHeld() {return held;}
+        void setHeld(bool h) {held = h;}
 };
 
 #endif /* ball_hpp */

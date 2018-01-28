@@ -12,11 +12,11 @@
 #include <stdio.h>
 #include "ofMain.h"
 
-class Camera
+class CeasyCam
 {
     private:
         ofCamera cam;
-    
+
         ofVec3f center;
         ofVec3f up;
         ofVec3f right;
@@ -24,12 +24,14 @@ class Camera
         ofVec2f mouse;
         ofVec2f prevMouse;
     
+        int count;
+    
         float clamp(float x, float min, float max);
     
     public:
-        Camera(ofVec3f pos);
-        Camera();
-        ~Camera();
+        CeasyCam(ofVec3f pos, float near, float far);
+        CeasyCam();
+        ~CeasyCam();
     
         bool controllable;
         float speed;
@@ -45,12 +47,14 @@ class Camera
         void begin();
         void end();
         void setPosition(ofVec3f pos){position = pos;}
+        void checkBoundaries(ofVec3f& d, ofVec3f& size);
     
         void moveForward(){velocity += forward * speed;}
         void moveBack(){velocity -= forward * speed;}
         void moveLeft(){velocity += right * speed;}
         void moveRight(){velocity -= right * speed;}
         void moveUp(float rate);
+        ofVec3f getForward(){return forward;}
 };
 
 

@@ -7,23 +7,22 @@ void ofApp::setup()
     
     for(int i = 0; i < 20; i++)
     {
-        int size = (int) ofRandom(20, 40);
+        int size = (int) ofRandom(30, 50);
     
-//        b[i] = Ball(ofVec3f(i*dimensions.x/20, size, dimensions.z/2), ofVec3f(i*dimensions.x/20, size, dimensions.z/2), 0, size, dimensions);
-
-        b[i] = Ball(ofVec3f(dimensions.x/2, dimensions.y - size, dimensions.z/2), ofVec3f(dimensions.x/2, dimensions.y - size, dimensions.z/2), 0, size, dimensions);
+        b[i] = Ball(ofVec3f(-dimensions.x/2 + i*dimensions.x/20 + dimensions.x/40,  -dimensions.y/2 + size, 0), 1, size, dimensions);
+//        b[i] = Ball(ofVec3f(ofRandom(-dimensions.x/2, dimensions.x/2), ofRandom(-dimensions.y/2, dimensions.y/2), ofRandom(-dimensions.z/2, dimensions.z/2)), 30, size, dimensions);
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::update()
 {
-    player.update();
-    
-    if(m[0]) player.moveFoward();
+    if(m[0]) player.moveForward();
     if(m[1]) player.moveBack();
     if(m[2]) player.moveLeft();
     if(m[3]) player.moveRight();
+    
+    player.update();
 }
 
 //--------------------------------------------------------------
@@ -39,6 +38,11 @@ void ofApp::draw()
     for(int i = 0; i < 20; i++)
     {
         b[i].update();
+        
+        if(b[i].isHeld())
+        {
+            player.carryBall(b[i]);
+        }
         
 //        for(int j )
     }
@@ -124,6 +128,30 @@ void ofApp::mouseDragged(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
 
+    if(button == 0)
+    {
+        for(int i = 0; i < 20; i++)
+        {
+            ofVec3f bp = b[i].getPos();
+            ofVec3f p = player.getPos();
+    
+            if(!player.holdsBall())
+            {
+                if(ofDist(bp.x, bp.z, p.x, p.z) <= 500)
+                {
+                    player.pickUpBall(b[i]);
+//                    std::cout << player.getPos();
+                }
+            }
+            else
+            {
+                if(b[i].isHeld())
+                {
+                    player.throwBall(b[i]);
+                }
+            }
+        }
+    }
 }
 
 //--------------------------------------------------------------

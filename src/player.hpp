@@ -17,11 +17,13 @@
 class Player
 {
     private:
+        CeasyCam cam;
+
+    protected:
         ofVec3f pos;
         ofVec3f size;
-        Camera cam;
         bool ducked;
-        bool out;
+        bool hit;
         int team;
         float speed;
         void checkBoundaries();
@@ -29,22 +31,22 @@ class Player
         ofVec3f d;
         bool oscillating;
         bool holdingBall;
-
     
     public:
         Player();
         Player(ofVec2f start, int t, ofVec3f& dimensions);
         ~Player();
-        void moveFoward();
+        void moveForward();
         void moveBack();
         void moveLeft();
         void moveRight();
         void jump();
         void duck();
         void update();
-//        void pickUpBall(Ball* b);
-//        void checkIfHit(Ball* b);
-//        void throwBall(Ball* b);
+        void pickUpBall(Ball &b);
+        void carryBall(Ball &b);
+        void checkIfHit(Ball &b);
+        void throwBall(Ball &b);
         void oscillatePower();
         void camera();
     
@@ -53,6 +55,7 @@ class Player
         void beginCam() {cam.begin();}
         void endCam() {cam.end();}
         bool holdsBall() {return holdingBall;}
+        ofVec3f getPos() {return pos;}
 };
 
 #endif /* player_hpp */
