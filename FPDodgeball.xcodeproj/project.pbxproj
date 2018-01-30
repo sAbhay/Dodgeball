@@ -115,16 +115,16 @@
 			isa = PBXGroup;
 			children = (
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
-				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
+				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				287B9F9E309D5D271D1E8139 /* ball.hpp */,
 				2350CC8BF9743EC3D7A11B93 /* ball.cpp */,
 				FE3A3345BA1EF448649CE3C1 /* player.hpp */,
 				BCDE8C9BEBCF137ABA15868F /* player.cpp */,
 				A1D334B93990950345E88F3C /* camera.hpp */,
 				50E70DAE403F5F3A1A9D0873 /* camera.cpp */,
-				90F2C4EC201C778500521F18 /* bot.cpp */,
 				90F2C4ED201C778500521F18 /* bot.hpp */,
+				90F2C4EC201C778500521F18 /* bot.cpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;

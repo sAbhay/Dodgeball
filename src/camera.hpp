@@ -53,6 +53,7 @@ class CeasyCam
         void moveRight(){velocity -= right * speed;}
         void moveUp(float rate);
         ofVec3f getForward(){return forward;}
+        ofVec3f getUp() {return up;}
 };
 
 

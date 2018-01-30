@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "player.hpp"
 #include "ball.hpp"
+#include "bot.hpp"
 
 class ofApp : public ofBaseApp
 {
@@ -27,6 +28,7 @@ class ofApp : public ofBaseApp
     private:
         Player player;
         Ball b[20];
+        Bot bots[10];
         ofVec3f dimensions = ofVec3f(10000, 2000, 10000);
         bool m[4] = {false, false, false, false};
 };

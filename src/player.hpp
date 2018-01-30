@@ -18,8 +18,6 @@ class Player
 {
     private:
         CeasyCam cam;
-
-    protected:
         ofVec3f pos;
         ofVec3f size;
         bool ducked;
@@ -44,7 +42,6 @@ class Player
         void moveLeft();
         void moveRight();
         void jump();
-        void duck();
         void update();
         void pickUpBall(Ball &b);
         void carryBall(Ball &b);
@@ -52,6 +49,8 @@ class Player
         void throwBall(Ball &b);
         void oscillatePower();
         void camera();
+        bool isHit() {return hit;}
+        void setHit(bool h) {hit = h;}
     
         void setDucked(bool d) {if(d) ducked = d; else revert = true;}
         bool isDucked() {return ducked;}
@@ -59,6 +58,7 @@ class Player
         void endCam() {cam.end();}
         bool holdsBall() {return holdingBall;}
         ofVec3f getPos() {return pos;}
+        
 };
 
 #endif /* player_hpp */

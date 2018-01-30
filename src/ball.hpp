@@ -32,6 +32,8 @@ private:
     float friction;
     bool live;
     bool held;
+    int thrower;
+    int holder;
     
     ofVec3f d;
 
@@ -53,6 +55,11 @@ private:
         bool isHeld() {return held;}
         void setHeld(bool h) {held = h;}
         void setCurve(ofVec2f c) {curve = c;}
+        int getThrower() {return thrower;}
+        void setThrower(int t) {thrower = t;}
+        void setHolder(int h) {holder = h;}
+        int getHolder() {return holder;}
+        ofVec2f getDeviation() {return deviation;}
 };
 
 #endif /* ball_hpp */

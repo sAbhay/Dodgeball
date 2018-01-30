@@ -3,14 +3,18 @@
 //--------------------------------------------------------------
 void ofApp::setup()
 {
-    player = Player(ofVec3f(ofGetWidth()/2, -100), 0, dimensions);
+    player = Player(ofVec3f(-dimensions.x/2, dimensions.z/4), 0, dimensions);
+    
+    for(int i = 0; i < 10; i++)
+    {
+        bots[i] = Bot(ofVec3f(-dimensions.x/2 + i*dimensions.x/10 + dimensions.x/20, -dimensions.z/4), 1, dimensions, i);
+    }
     
     for(int i = 0; i < 20; i++)
     {
         int size = (int) ofRandom(30, 50);
     
         b[i] = Ball(ofVec3f(-dimensions.x/2 + i*dimensions.x/20 + dimensions.x/40,  -dimensions.y/2 + size, 0), 1, size, dimensions);
-//        b[i] = Ball(ofVec3f(ofRandom(-dimensions.x/2, dimensions.x/2), ofRandom(-dimensions.y/2, dimensions.y/2), ofRandom(-dimensions.z/2, dimensions.z/2)), 30, size, dimensions);
     }
 }
 
@@ -23,6 +27,58 @@ void ofApp::update()
     if(m[3]) player.moveRight();
     
     player.update();
+    
+    for(int i = 0; i < 10; i++)
+    {
+        for(int j = 0; j < 10; j++)
+        {
+            if(i != j)
+            {
+                bots[i].checkCollision(bots[j]);
+            }
+        }
+        
+        if(bots[i].findClosestBall(b) != -1)
+        {
+            if(!bots[i].holdsBall())
+            {
+                bots[i].moveTowards(b[bots[i].findClosestBall(b)].getPos());
+            }
+        }
+        
+        for(int j = 0; j < 20; j++)
+        {
+            bots[i].checkIfHit(b[j]);
+        
+            ofVec3f bp = b[j].getPos();
+            ofVec3f p = bots[i].getPos();
+    
+            if(!bots[i].holdsBall())
+            {
+                if(ofDist(bp.x, bp.y, bp.z, p.x, p.y, p.z) <= 600 && !b[j].isHeld())
+                {
+                    if(!b[j].isLive())
+                    {
+                        bots[i].pickUpBall(b[j]);
+                        bots[i].setDodgeDir(ofRandom(-1, 1));
+                    }
+                    else
+                    {
+                        if(b[j].getThrower() == -1) bots[i].dodge(b[j]);
+                    }
+                }
+            }
+            else
+            {
+                if(b[j].getHolder() == i)
+                {
+                    bots[i].throwBall(b[j], player.getPos());
+                }
+            }
+        }
+        
+        bots[i].update();
+    }
 }
 
 //--------------------------------------------------------------
@@ -34,14 +90,29 @@ void ofApp::draw()
     ofNoFill();
     ofSetColor(255);
     ofDrawBox(0, 0, 0, dimensions.x, dimensions.y, dimensions.z);
+    ofDrawLine(-dimensions.x/2, -dimensions.y/2, 0, dimensions.x/2, -dimensions.y/2, 0);
+    
+//    if(player.isHit()) ofBackground(0, 255, 0);
     
     for(int i = 0; i < 20; i++)
     {
+        player.checkIfHit(b[i]);
+    
         b[i].update();
         
         if(b[i].isHeld())
         {
-            player.carryBall(b[i]);
+            if(b[i].getHolder() != -100)
+            {
+                if(b[i].getHolder() == -1)
+                {
+                    player.carryBall(b[i]);
+                }
+                else
+                {
+                    bots[b[i].getHolder()].carryBall(b[i]);
+                }
+            }
         }
         
         for(int j = 0; j < 20; j++)
@@ -51,6 +122,11 @@ void ofApp::draw()
                 b[i].checkCollision(b[j]);
             }
         }
+    }
+    
+    for(int i = 0; i < 10; i++)
+    {
+        bots[i].display();
     }
     
     player.endCam();
@@ -142,14 +218,20 @@ void ofApp::mousePressed(int x, int y, int button){
     
             if(!player.holdsBall())
             {
-                if(ofDist(bp.x, bp.z, p.x, p.z) <= 500)
+                if(ofDist(bp.x, bp.y, bp.z, p.x, p.y, p.z) <= 600 && !b[i].isHeld())
                 {
                     player.pickUpBall(b[i]);
+                    
+                    if(b[i].isLive())
+                    {
+                        bots[b[i].getThrower()].setHit(true);
+                        if(player.isHit()) player.setHit(false);
+                    }
                 }
             }
             else
             {
-                if(b[i].isHeld())
+                if(b[i].isHeld() && b[i].getHolder() == -1)
                 {
                     player.throwBall(b[i]);
                 }

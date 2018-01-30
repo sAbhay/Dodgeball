@@ -96,12 +96,6 @@ void Player::jump()
     count = 0;
 }
 
-void Player::duck()
-{
-    speed *= 0.5;
-    size.y *= 0.5;
-}
-
 void Player::checkBoundaries()
 {
     cam.checkBoundaries(d, size);
@@ -110,8 +104,15 @@ void Player::checkBoundaries()
 void Player::checkIfHit(Ball& b)
 {
     ofVec3f bp = b.getPos();
-
-    if((bp.y <= pos.y + size.y/2 && bp.y >= pos.y - size.y/2) && ofDist(bp.x, bp.z, pos.x, pos.y) <= size.x/2 + b.getSize())
+    
+    float d1 = ofDist(bp.x, bp.y, bp.z, pos.x, pos.y - size.y/2, pos.z);
+    float d2 = ofDist(bp.x, bp.y, bp.z, pos.x, pos.y + size.y/2, pos.z);
+    
+    float lineLen = size.y;
+    
+    float buffer = b.getSize() + size.x;
+    
+    if (d1+d2 >= lineLen-buffer && d1+d2 <= lineLen+buffer)
     {
         if(b.isLive())
         {
@@ -124,6 +125,7 @@ void Player::pickUpBall(Ball& b)
 {
     b.setHeld(true);
     holdingBall = true;
+    b.setHolder(-1);
 }
 
 void Player::carryBall(Ball& b)
@@ -159,15 +161,18 @@ void Player::throwBall(Ball& b)
     b.setHeld(false);
     b.setCurve(ofVec2f(ofRandom(0, PI), ofRandom(-PI, PI/2)));
     ofVec3f target = cam.getForward();
-    b.setVel(target*power);
+    b.setVel((target + cam.getUp()/10)*power);
     b.setLive(true);
+    b.setThrower(-1);
+    b.setHolder(-100);
 }
 
 void Player::update()
 {
     if(ducked)
     {
-        duck();
+        speed *= 0.5;
+        size.y *= 0.5;
         ducked = false;
     }
     
@@ -178,9 +183,9 @@ void Player::update()
         revert = false;
     }
     
-    cam.position.y = 5*pos.y/6;
+    cam.position.y = -d.y/2 + 5*size.y/6;
     pos = cam.position;
-    pos.y = -d.y/2 + size.y;
+    pos.y = -d.y/2 + size.y/2;
     
     checkBoundaries();
     
@@ -204,7 +209,7 @@ void Player::update()
     }
     else
     {
-        cam.applyGravity(0.1f, 5*pos.y/6);
+        cam.applyGravity(0.1f, -d.y/2 + 5*size.y/6);
     }
     
     if(oscillating) oscillatePower();

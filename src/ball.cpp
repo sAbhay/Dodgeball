@@ -25,6 +25,10 @@ Ball::Ball()
     m = 0;
     
     live = false;
+    held = false;
+    
+    thrower = 0;
+    holder = -100;
 }
 
 Ball::Ball(ofVec3f st, int s, int radius, ofVec3f& dimensions)
@@ -50,6 +54,9 @@ Ball::Ball(ofVec3f st, int s, int radius, ofVec3f& dimensions)
     
     live = false;
     held = false;
+    
+    thrower = 0;
+    holder = -100;
 }
 
 Ball::~Ball()
@@ -67,10 +74,7 @@ void Ball::display()
 void Ball::move()
 {
     if(live)
-    {
-//        curve.x = curvelim.x*ofDist(start.x, start.y, start.z, target.x, target.y, target.z);
-//        curve.y = curvelim.y*ofDist(start.x, start.y, start.z, target.x, target.y, target.z);
-    
+    {    
         if(deviation.x < 10 && deviation.y < 10)
         {
             std::cout << curve.x;
