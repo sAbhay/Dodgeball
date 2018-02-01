@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "ofMain.h"
 #include "ball.hpp"
+#include <random>
 
 class Bot
 {
@@ -33,7 +34,6 @@ class Bot
         int index;
         bool colliding;
         bool running;
-        float dodgedir;
     
     public:
         Bot();
@@ -55,7 +55,6 @@ class Bot
         void display();
         int findClosestBall(Ball (&b)[20]);
         void dodge(Ball &b);
-        void setDodgeDir(float d) {dodgedir = d;}
     
         bool isHit() {return hit;}
         void setHit(bool h) {hit = h;}
@@ -69,6 +68,7 @@ class Bot
         void setVel(ofVec3f v) {vel = v;}
         bool isRunning() {return running;}
         void setRunning(bool r) {running = r;}
+        int getIndex() {return index;}
 };
 
 #endif /* bot_hpp */

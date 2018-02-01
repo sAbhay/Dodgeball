@@ -34,6 +34,7 @@ private:
     bool held;
     int thrower;
     int holder;
+    int claimant;
     
     ofVec3f d;
 
@@ -43,6 +44,7 @@ private:
         ~Ball();
         void checkCollision(Ball& b);
         void update();
+        int findClosestBot(ofVec2f (&b)[10]);
     
         void setLive(bool l) {live = l;}
         bool isLive() {return live;}
@@ -60,6 +62,8 @@ private:
         void setHolder(int h) {holder = h;}
         int getHolder() {return holder;}
         ofVec2f getDeviation() {return deviation;}
+        void setClaimant(int c) {claimant = c;}
+        int getClaimant() {return claimant;}
 };
 
 #endif /* ball_hpp */

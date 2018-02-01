@@ -195,3 +195,22 @@ void Ball::update()
     
     display();
 }
+
+int Ball::findClosestBot(ofVec2f (&b)[10])
+{
+    int index = 0;
+    float shortestDistance = ofDist(pos.x, pos.z, b[1].x, b[1].y);
+
+    for(int i = 0; i < 10; i++)
+    {
+        float dist = ofDist(pos.x, pos.z, b[i].x, b[i].y);
+    
+        if(dist <= shortestDistance)
+        {
+            shortestDistance = dist;
+            index = i;
+        }
+    }
+    
+    return index;
+}

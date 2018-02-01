@@ -32,8 +32,6 @@ Bot::Bot()
     holdingBall = false;
     
     colliding = false;
-    
-    dodgedir = 1;
 }
 
 Bot::Bot(ofVec2f start, int t, ofVec3f& dimensions, int i)
@@ -63,8 +61,6 @@ Bot::Bot(ofVec2f start, int t, ofVec3f& dimensions, int i)
     holdingBall = false;
     
     colliding = false;
-    
-    dodgedir = 1;
 }
 
 Bot::~Bot()
@@ -203,6 +199,7 @@ void Bot::display()
 void Bot::pickUpBall(Ball& b)
 {
     b.setHeld(true);
+//    b.setLive(false);
     holdingBall = true;
     b.setHolder(index);
 }
@@ -325,9 +322,9 @@ void Bot::dodge(Ball &b)
     ofVec3f bv = b.getVel();
     bv.y = 0;
 
-    if(dodgedir < 0)
+    if((pos - b.getPos()).x < 0)
     {
-        float temp = -bv.x; // * ((b.getDeviation().x != 0) ? b.getDeviation().x/b.getDeviation().x:1);
+        float temp = bv.x;
         bv.x = bv.z;
         bv.z = temp;
     }
@@ -338,7 +335,7 @@ void Bot::dodge(Ball &b)
         bv.z = temp;
     }
 
-    vel = bv.normalize() * speed * 40;
+    vel = bv.normalize() * speed * ofRandom(80, 120) * (500 - ofDist(pos.x, pos.y, pos.z, b.getPos().x, b.getPos().y, b.getPos().z))/500;
 
 //    vel = ofVec3f(bv.x, 0, 0).normalize() * speed * 40;
 }

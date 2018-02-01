@@ -30,6 +30,8 @@ void ofApp::update()
     
     for(int i = 0; i < 10; i++)
     {
+        botpos[i] = ofVec2f(bots[i].getPos().x, bots[i].getPos().z);
+    
         for(int j = 0; j < 10; j++)
         {
             if(i != j)
@@ -42,7 +44,17 @@ void ofApp::update()
         {
             if(!bots[i].holdsBall())
             {
-                bots[i].moveTowards(b[bots[i].findClosestBall(b)].getPos());
+                int index = bots[i].findClosestBall(b);
+                
+                if(b[index].findClosestBot(botpos) == bots[i].getIndex())
+                {
+                    bots[i].setRunning(false);
+                    bots[i].moveTowards(b[index].getPos());
+                }
+                else
+                {
+                    bots[i].setRunning(true);
+                }
             }
         }
         
@@ -55,12 +67,11 @@ void ofApp::update()
     
             if(!bots[i].holdsBall())
             {
-                if(ofDist(bp.x, bp.y, bp.z, p.x, p.y, p.z) <= 600 && !b[j].isHeld())
+                if(ofDist(bp.x, bp.y, bp.z, p.x, p.y, p.z) <= 500 && !b[j].isHeld())
                 {
                     if(!b[j].isLive())
                     {
                         bots[i].pickUpBall(b[j]);
-                        bots[i].setDodgeDir(ofRandom(-1, 1));
                     }
                     else
                     {
@@ -87,18 +98,15 @@ void ofApp::draw()
     player.beginCam();
     
     ofBackground(0);
+    if(player.isHit()) ofBackground(0, 255, 0);
     ofNoFill();
     ofSetColor(255);
     ofDrawBox(0, 0, 0, dimensions.x, dimensions.y, dimensions.z);
     ofDrawLine(-dimensions.x/2, -dimensions.y/2, 0, dimensions.x/2, -dimensions.y/2, 0);
     
-//    if(player.isHit()) ofBackground(0, 255, 0);
-    
     for(int i = 0; i < 20; i++)
     {
-        player.checkIfHit(b[i]);
-    
-        b[i].update();
+        if(b[i].getThrower() != -1) player.checkIfHit(b[i]);
         
         if(b[i].isHeld())
         {
@@ -122,6 +130,8 @@ void ofApp::draw()
                 b[i].checkCollision(b[j]);
             }
         }
+        
+        b[i].update();
     }
     
     for(int i = 0; i < 10; i++)
@@ -218,15 +228,15 @@ void ofApp::mousePressed(int x, int y, int button){
     
             if(!player.holdsBall())
             {
-                if(ofDist(bp.x, bp.y, bp.z, p.x, p.y, p.z) <= 600 && !b[i].isHeld())
+                if(ofDist(bp.x, bp.y, bp.z, p.x, p.y, p.z) <= 500 && !b[i].isHeld())
                 {
-                    player.pickUpBall(b[i]);
-                    
                     if(b[i].isLive())
                     {
                         bots[b[i].getThrower()].setHit(true);
                         if(player.isHit()) player.setHit(false);
                     }
+                    
+                    player.pickUpBall(b[i]);
                 }
             }
             else

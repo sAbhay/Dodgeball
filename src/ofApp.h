@@ -29,6 +29,7 @@ class ofApp : public ofBaseApp
         Player player;
         Ball b[20];
         Bot bots[10];
+        ofVec2f botpos[10];
         ofVec3f dimensions = ofVec3f(10000, 2000, 10000);
         bool m[4] = {false, false, false, false};
 };

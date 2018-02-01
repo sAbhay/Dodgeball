@@ -124,6 +124,7 @@ void Player::checkIfHit(Ball& b)
 void Player::pickUpBall(Ball& b)
 {
     b.setHeld(true);
+    b.setLive(false);
     holdingBall = true;
     b.setHolder(-1);
 }
