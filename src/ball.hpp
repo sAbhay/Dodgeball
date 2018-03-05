@@ -15,7 +15,6 @@
 class Ball
 {
 private:
-    void display();
     void move();
     void checkBoundaries();
     
@@ -35,6 +34,7 @@ private:
     int thrower;
     int holder;
     int claimant;
+    ofColor c;
     
     ofVec3f d;
 
@@ -43,8 +43,9 @@ private:
         Ball(ofVec3f st, int s, int radius, ofVec3f& dimensions);
         ~Ball();
         void checkCollision(Ball& b);
+        void display();
         void update();
-        int findClosestBot(ofVec2f (&b)[10]);
+        int findClosestBot(std::vector<ofVec2f> &b);
     
         void setLive(bool l) {live = l;}
         bool isLive() {return live;}

@@ -57,6 +57,7 @@ class Player
         void beginCam() {cam.begin();}
         void endCam() {cam.end();}
         bool holdsBall() {return holdingBall;}
+        void setHoldingBall(bool h) {holdingBall = h;}
         ofVec3f getPos() {return pos;}
         
 };

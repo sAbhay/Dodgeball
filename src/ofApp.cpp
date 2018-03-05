@@ -3,19 +3,12 @@
 //--------------------------------------------------------------
 void ofApp::setup()
 {
+    counter = 0;
+    level = 0;
+    
     player = Player(ofVec3f(-dimensions.x/2, dimensions.z/4), 0, dimensions);
     
-    for(int i = 0; i < 10; i++)
-    {
-        bots[i] = Bot(ofVec3f(-dimensions.x/2 + i*dimensions.x/10 + dimensions.x/20, -dimensions.z/4), 1, dimensions, i);
-    }
-    
-    for(int i = 0; i < 20; i++)
-    {
-        int size = (int) ofRandom(30, 50);
-    
-        b[i] = Ball(ofVec3f(-dimensions.x/2 + i*dimensions.x/20 + dimensions.x/40,  -dimensions.y/2 + size, 0), 1, size, dimensions);
-    }
+    restart();
 }
 
 //--------------------------------------------------------------
@@ -28,68 +21,123 @@ void ofApp::update()
     
     player.update();
     
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < bots.size(); i++)
     {
-        botpos[i] = ofVec2f(bots[i].getPos().x, bots[i].getPos().z);
+        if(bots.at(i).isHit())
+        {
+            bots.erase(bots.begin() + i);
+        }
+    }
     
-        for(int j = 0; j < 10; j++)
+    cout << bots.size() << endl;
+    
+    for(int i = 0; i < bots.size(); i++)
+    {
+        bots.at(i).setIndex(i);
+    
+        botpos.push_back(ofVec2f(bots.at(i).getPos().x, bots.at(i).getPos().z));
+    
+        for(int j = 0; j < bots.size(); j++)
         {
             if(i != j)
             {
-                bots[i].checkCollision(bots[j]);
+                bots.at(i).checkCollision(bots.at(j));
             }
         }
         
-        if(bots[i].findClosestBall(b) != -1)
+        if(bots.at(i).findClosestBall(b) != -1)
         {
-            if(!bots[i].holdsBall())
+            if(!bots.at(i).holdsBall())
             {
-                int index = bots[i].findClosestBall(b);
+                int index = bots.at(i).findClosestBall(b);
                 
-                if(b[index].findClosestBot(botpos) == bots[i].getIndex())
+                if(b.at(index).findClosestBot(botpos) == bots.at(i).getIndex())
                 {
-                    bots[i].setRunning(false);
-                    bots[i].moveTowards(b[index].getPos());
+                    bots.at(i).setRunning(false);
+                    bots.at(i).moveTowards(b.at(index).getPos());
                 }
                 else
                 {
-                    bots[i].setRunning(true);
+                    bots.at(i).setRunning(true);
                 }
             }
         }
         
-        for(int j = 0; j < 20; j++)
+        for(int j = 0; j < b.size(); j++)
         {
-            bots[i].checkIfHit(b[j]);
+            bots.at(i).checkIfHit(b.at(j));
         
-            ofVec3f bp = b[j].getPos();
-            ofVec3f p = bots[i].getPos();
+            ofVec3f bp = b.at(j).getPos();
+            ofVec3f p = bots.at(i).getPos();
     
-            if(!bots[i].holdsBall())
+            if(!bots.at(i).holdsBall())
             {
-                if(ofDist(bp.x, bp.y, bp.z, p.x, p.y, p.z) <= 500 && !b[j].isHeld())
+                if(ofDist(bp.x, bp.y, bp.z, p.x, p.y, p.z) <= 500 && !b.at(j).isHeld())
                 {
-                    if(!b[j].isLive())
+                    if(!b.at(j).isLive())
                     {
-                        bots[i].pickUpBall(b[j]);
+                        bots.at(i).pickUpBall(b.at(j));
                     }
                     else
                     {
-                        if(b[j].getThrower() == -1) bots[i].dodge(b[j]);
+                        if(b.at(j).getThrower() == -1) bots.at(i).dodge(b.at(j), level);
                     }
                 }
             }
             else
             {
-                if(b[j].getHolder() == i)
+                if(b.at(j).getHolder() == i)
                 {
-                    bots[i].throwBall(b[j], player.getPos());
+                    bots.at(i).throwBall(b.at(j), player.getPos());
                 }
             }
         }
         
-        bots[i].update();
+        bots.at(i).update();
     }
+    
+    botpos.clear();
+    
+    for(int i = 0; i < b.size(); i++)
+    {
+        if(b.at(i).getThrower() != -1) player.checkIfHit(b.at(i));
+        
+        if(b.at(i).isHeld())
+        {
+            if(b.at(i).getHolder() != -100)
+            {
+                if(b.at(i).getHolder() == -1)
+                {
+                    player.carryBall(b.at(i));
+                }
+                else
+                {
+                    bots.at(b.at(i).getHolder()).carryBall(b.at(i));
+                }
+            }
+        }
+        
+        for(int j = 0; j < b.size(); j++)
+        {
+            if(i != j)
+            {
+                b.at(i).checkCollision(b.at(j));
+            }
+        }
+        
+        b.at(i).update();
+    }
+    
+    counter++;
+    
+    if(counter == (int) ((20*ofGetFrameRate()/b.size())*10))
+    {
+        int size = (int) ofRandom(30, 50);
+        b.push_back(Ball(ofVec3f(ofRandom(-dimensions.x/2, dimensions.x/2),  dimensions.y/4 + size, ofRandom(-dimensions.z/2, 0)), 1, size, dimensions));
+        counter = 0;
+    }
+    
+    if(bots.size() == 0) restart();
 }
 
 //--------------------------------------------------------------
@@ -104,39 +152,14 @@ void ofApp::draw()
     ofDrawBox(0, 0, 0, dimensions.x, dimensions.y, dimensions.z);
     ofDrawLine(-dimensions.x/2, -dimensions.y/2, 0, dimensions.x/2, -dimensions.y/2, 0);
     
-    for(int i = 0; i < 20; i++)
+    for(int i = 0; i < b.size(); i++)
     {
-        if(b[i].getThrower() != -1) player.checkIfHit(b[i]);
-        
-        if(b[i].isHeld())
-        {
-            if(b[i].getHolder() != -100)
-            {
-                if(b[i].getHolder() == -1)
-                {
-                    player.carryBall(b[i]);
-                }
-                else
-                {
-                    bots[b[i].getHolder()].carryBall(b[i]);
-                }
-            }
-        }
-        
-        for(int j = 0; j < 20; j++)
-        {
-            if(i != j)
-            {
-                b[i].checkCollision(b[j]);
-            }
-        }
-        
-        b[i].update();
+        b.at(i).display();
     }
     
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < bots.size(); i++)
     {
-        bots[i].display();
+        bots.at(i).display();
     }
     
     player.endCam();
@@ -221,29 +244,29 @@ void ofApp::mousePressed(int x, int y, int button){
 
     if(button == 0)
     {
-        for(int i = 0; i < 20; i++)
+        for(int i = 0; i < b.size(); i++)
         {
-            ofVec3f bp = b[i].getPos();
+            ofVec3f bp = b.at(i).getPos();
             ofVec3f p = player.getPos();
     
             if(!player.holdsBall())
             {
-                if(ofDist(bp.x, bp.y, bp.z, p.x, p.y, p.z) <= 500 && !b[i].isHeld())
+                if(ofDist(bp.x, bp.y, bp.z, p.x, p.y, p.z) <= 500 && !b.at(i).isHeld())
                 {
-                    if(b[i].isLive())
+                    if(b.at(i).isLive())
                     {
-                        bots[b[i].getThrower()].setHit(true);
+                        bots.at(b.at(i).getThrower()).setHit(true);
                         if(player.isHit()) player.setHit(false);
                     }
                     
-                    player.pickUpBall(b[i]);
+                    player.pickUpBall(b.at(i));
                 }
             }
             else
             {
-                if(b[i].isHeld() && b[i].getHolder() == -1)
+                if(b.at(i).isHeld() && b.at(i).getHolder() == -1)
                 {
-                    player.throwBall(b[i]);
+                    player.throwBall(b.at(i));
                 }
             }
         }
@@ -278,4 +301,27 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
+}
+
+void ofApp::restart()
+{
+    level++;
+    counter = 0;
+    
+    b.clear();
+    bots.clear();
+    
+    player.setHoldingBall(false);
+    
+     for(int i = 0; i < level; i++)
+    {
+        bots.push_back(Bot(ofVec3f(-dimensions.x/2 + i*dimensions.x/level + dimensions.x/(2*level), -dimensions.z/4), 1, dimensions, i));
+    }
+    
+    for(int i = 0; i < 20; i++)
+    {
+        int size = (int) ofRandom(30, 50);
+    
+        b.push_back(Ball(ofVec3f(-dimensions.x/2 + i*dimensions.x/20 + dimensions.x/40, -dimensions.y/2 + size, 0), 0, size, dimensions));
+    }
 }

@@ -29,6 +29,8 @@ Ball::Ball()
     
     thrower = 0;
     holder = -100;
+    
+    c = ofColor(ofRandom(128,255), ofRandom(128,255), ofRandom(128,255));
 }
 
 Ball::Ball(ofVec3f st, int s, int radius, ofVec3f& dimensions)
@@ -57,6 +59,8 @@ Ball::Ball(ofVec3f st, int s, int radius, ofVec3f& dimensions)
     
     thrower = 0;
     holder = -100;
+    
+    c = ofColor(ofRandom(128,255), ofRandom(128,255), ofRandom(128,255));
 }
 
 Ball::~Ball()
@@ -76,9 +80,7 @@ void Ball::move()
     if(live)
     {    
         if(deviation.x < 10 && deviation.y < 10)
-        {
-            std::cout << curve.x;
-            
+        {            
             deviation.x += (m/80)*cos(curve.x);
             deviation.y += (m/100)*sin(curve.x);
             
@@ -192,18 +194,16 @@ void Ball::update()
 {
     checkBoundaries();
     move();
-    
-    display();
 }
 
-int Ball::findClosestBot(ofVec2f (&b)[10])
+int Ball::findClosestBot(std::vector<ofVec2f> &b)
 {
     int index = 0;
-    float shortestDistance = ofDist(pos.x, pos.z, b[1].x, b[1].y);
+    float shortestDistance = ofDist(pos.x, pos.z, b.at(0).x, b.at(0).y);
 
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < b.size(); i++)
     {
-        float dist = ofDist(pos.x, pos.z, b[i].x, b[i].y);
+        float dist = ofDist(pos.x, pos.z, b.at(i).x, b.at(i).y);
     
         if(dist <= shortestDistance)
         {

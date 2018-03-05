@@ -264,18 +264,18 @@ void Bot::update()
     pos += vel;
 }
 
-int Bot::findClosestBall(Ball (&b)[20])
+int Bot::findClosestBall(std::vector<Ball> &b)
 {
     int index = -1;
     float shortestDistance = ofDist(pos.x, pos.z, b[0].getPos().x, b[0].getPos().z);
 
-    for(int i = 0; i < 20; i++)
+    for(int i = 0; i < b.size(); i++)
     {
-        if(b[i].getPos().z <= 0)
+        if(b.at(i).getPos().z <= 0)
         {
-            if(!b[i].isHeld())
+            if(!b.at(i).isHeld())
             {
-                float dist = ofDist(pos.x, pos.z, b[i].getPos().x, b[i].getPos().z);
+                float dist = ofDist(pos.x, pos.z, b.at(i).getPos().x, b.at(i).getPos().z);
     
                 if(dist <= shortestDistance)
                 {
@@ -317,7 +317,7 @@ void Bot::checkCollision(Bot &b)
     else colliding = false;
 }
 
-void Bot::dodge(Ball &b)
+void Bot::dodge(Ball &b, int l)
 {
     ofVec3f bv = b.getVel();
     bv.y = 0;
@@ -335,7 +335,7 @@ void Bot::dodge(Ball &b)
         bv.z = temp;
     }
 
-    vel = bv.normalize() * speed * ofRandom(80, 120) * (500 - ofDist(pos.x, pos.y, pos.z, b.getPos().x, b.getPos().y, b.getPos().z))/500;
+    vel = bv.normalize() * speed * ofRandom(10 + pow(l, 1.1)/5, 20 + pow(l, 1.3)) * (500 - ofDist(pos.x, pos.y, pos.z, b.getPos().x, b.getPos().y, b.getPos().z))/500;
 
 //    vel = ofVec3f(bv.x, 0, 0).normalize() * speed * 40;
 }

@@ -53,8 +53,8 @@ class Bot
         void throwBall(Ball &b, ofVec3f target);
         void oscillatePower();
         void display();
-        int findClosestBall(Ball (&b)[20]);
-        void dodge(Ball &b);
+        int findClosestBall(std::vector<Ball> &b);
+        void dodge(Ball &b, int l);
     
         bool isHit() {return hit;}
         void setHit(bool h) {hit = h;}
@@ -69,6 +69,7 @@ class Bot
         bool isRunning() {return running;}
         void setRunning(bool r) {running = r;}
         int getIndex() {return index;}
+        void setIndex(int i) {index = i;}
 };
 
 #endif /* bot_hpp */

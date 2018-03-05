@@ -27,9 +27,13 @@ class ofApp : public ofBaseApp
     
     private:
         Player player;
-        Ball b[20];
-        Bot bots[10];
-        ofVec2f botpos[10];
+        std::vector<Ball> b;
+        std::vector<Bot> bots;
+        std::vector<ofVec2f> botpos;
         ofVec3f dimensions = ofVec3f(10000, 2000, 10000);
         bool m[4] = {false, false, false, false};
+        int counter;
+        int level;
+    
+        void restart();
 };
